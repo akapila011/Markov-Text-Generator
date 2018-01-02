@@ -6,15 +6,28 @@
         xmlns:local="clr-namespace:Markov_Chain_Sentence_Generator"
         mc:Ignorable="d"
         Title="Markov Sentence Generator" Height="450" Width="600" WindowStartupLocation="CenterScreen">
-    <Grid>
-        <StatusBar x:Name="status_statusBar" HorizontalAlignment="Left" Height="35" Margin="0,384,0,0" VerticalAlignment="Top" Width="592">
-            <Label x:Name="trainingStatus_label" Content="Not Trained" Height="27" Width="139" ToolTip="Status of Markov Model used to generate text" FontSize="10" FontFamily="Lucida Sans Unicode"/>
+    <Grid Height="Auto" Width="Auto">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="31*"/>
+            <RowDefinition Height="26*"/>
+            <RowDefinition Height="325*"/>
+            <RowDefinition Height="37*"/>
+        </Grid.RowDefinitions>
+        <StatusBar x:Name="status_statusBar" HorizontalAlignment="Left" Height="35" Margin="0,2,0,0" VerticalAlignment="Top" Width="592" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+            <Label x:Name="trainingStatus_label" Content="Not Trained" Height="27" Width="139" ToolTip="Status of Markov Model used to generate text" FontSize="10" FontFamily="Lucida Sans Unicode" Grid.Column="0" Grid.ColumnSpan="2"/>
         </StatusBar>
-        <TextBox x:Name="filepath_textBox" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="572" RenderTransformOrigin="0.651,0.533" IsEnabled="False"/>
-        <Button x:Name="selectFile_button" Content="Select File" HorizontalAlignment="Left" Margin="10,38,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.25,-0.537" ToolTip="Select a .txt file to train the Markov model"/>
-        <Button x:Name="trainModel_button" Content="Train Model" HorizontalAlignment="Left" Margin="90,38,0,0" VerticalAlignment="Top" Width="75" ToolTip="Train the Markov model based on the text file loaded"/>
-        <GroupBox x:Name="generatedText_groupBox" Header="Text Generation" HorizontalAlignment="Left" Height="288" Margin="10,80,0,0" VerticalAlignment="Top" Width="572">
-            <Button x:Name="generateText_button" Content="Generate Text" HorizontalAlignment="Left" Margin="440,244,0,0" VerticalAlignment="Top" Width="108" ToolTip="Generate a sentence using the Markov model"/>
+        <TextBox x:Name="filepath_textBox" HorizontalAlignment="Left" Height="23" Margin="10,7,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="572" RenderTransformOrigin="0.651,0.533" IsEnabled="False" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
+        <Button x:Name="selectFile_button" Content="Select File" HorizontalAlignment="Left" Margin="10,4,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.25,-0.537" ToolTip="Select a .txt file to train the Markov model" Height="20" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="SelectFile"/>
+        <Button x:Name="trainModel_button" Content="Train Model" HorizontalAlignment="Left" Margin="108,4,0,0" VerticalAlignment="Top" Width="75" ToolTip="Train the Markov model based on the text file loaded" Height="20" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="TrainModel"/>
+        <GroupBox x:Name="generatedText_groupBox" Header="Text Generation" HorizontalAlignment="Left" Height="299" Margin="10,10,0,0" VerticalAlignment="Top" Width="572" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid HorizontalAlignment="Left" Height="265" Margin="0,10,-2,0" VerticalAlignment="Top" Width="562">
+                <Button x:Name="generateText_button" Content="Generate Text" HorizontalAlignment="Left" VerticalAlignment="Top" Width="108" ToolTip="Generate a sentence using the Markov model" Height="26" Click="GenerateText" Margin="443,233,0,0"/>
+                <TextBlock x:Name="generatedText_textBlock" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="228" Width="552" FontSize="14"/>
+            </Grid>
         </GroupBox>
 
     </Grid>
