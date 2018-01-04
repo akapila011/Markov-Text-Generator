@@ -27,6 +27,8 @@
             <Grid HorizontalAlignment="Left" Height="265" Margin="0,10,-2,0" VerticalAlignment="Top" Width="562">
                 <Button x:Name="generateText_button" Content="Generate Text" HorizontalAlignment="Left" VerticalAlignment="Top" Width="108" ToolTip="Generate a sentence using the Markov model" Height="26" Click="GenerateText" Margin="443,233,0,0"/>
                 <TextBlock x:Name="generatedText_textBlock" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="228" Width="552" FontSize="14"/>
+                <Label x:Name="numberWords_label" Content="Number of Words: " HorizontalAlignment="Left" Margin="27,241,0,0" VerticalAlignment="Top"/>
+                <ComboBox x:Name="numberWords_comboBox" HorizontalAlignment="Left" Margin="143,243,0,0" VerticalAlignment="Top" Width="51" IsReadOnly="True" ToolTip="Select the number of words in the generated sentence." SelectedIndex="1"/>
             </Grid>
         </GroupBox>
 

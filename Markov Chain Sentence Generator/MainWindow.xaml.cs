@@ -24,14 +24,17 @@ namespace Markov_Chain_Sentence_Generator
     {
         Markov mk = null;
         String text = null;
+        List<int> number_of_words = new List<int>() {10, 20, 30, 40, 50};
 
         public MainWindow()
         {
             InitializeComponent();
+            numberWords_comboBox.ItemsSource = number_of_words;
         }
 
         private void SelectFile(object sender, RoutedEventArgs e)
         {
+            mk = null;  // ensure no old models are used with a new file
             OpenFileDialog openFileDailog = new OpenFileDialog();
             openFileDailog.FileName = ""; // Default file name
             openFileDailog.DefaultExt = ".txt"; // Default file extension
@@ -62,7 +65,7 @@ namespace Markov_Chain_Sentence_Generator
                 MessageBox.Show("There is no text available for training.");
                 return;
             }
-            mk = new Markov("Test", text);
+            mk = new Markov("Markov Model", text);
             try
             {
                 mk.Train();
@@ -78,6 +81,7 @@ namespace Markov_Chain_Sentence_Generator
 
         private void GenerateText(object sender, RoutedEventArgs e)
         {
+            generatedText_textBlock.Text = "";
             if (mk == null)
             {
                 MessageBox.Show("You must first select a text file and click train before generating text.");
@@ -90,12 +94,11 @@ namespace Markov_Chain_Sentence_Generator
             }
             try
             {
-                generatedText_textBlock.Text = mk.GenerateSentence();
+                generatedText_textBlock.Text = mk.GenerateSentence(length:(int)numberWords_comboBox.SelectedValue);
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Problem with generating text. Error: " + ex.Message);
-                generatedText_textBlock.Text = "";
             }
         }
     }

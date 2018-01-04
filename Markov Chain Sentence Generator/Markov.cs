@@ -29,6 +29,7 @@ namespace Markov_Chain_Sentence_Generator
         public void Train()
         {
             trained = false;
+            text = CleanText(text);
             String[] sentences = text.Split('.');
             if (sentences.Length < 2)
             {
@@ -41,6 +42,10 @@ namespace Markov_Chain_Sentence_Generator
                 for(int j=0; j!=words.Length; j++)
                 {
                     String word = words[j].ToLower();
+                    if (String.IsNullOrWhiteSpace(word))
+                    {
+                        continue;
+                    }
                     if (j == words.Length - 1)  // last word, goes to end
                     {
                         model["END"].Add(word);
@@ -51,38 +56,49 @@ namespace Markov_Chain_Sentence_Generator
                         {
                             model["START"].Add(word);
                         }
-                        model[word] = new List<string>();  // create entry for current word and add the preceding word to its list
-                        model[word].Add(words[j + 1].ToLower());
+                        if (!model.ContainsKey(word))
+                        {
+                            model[word] = new List<string>();  // create entry for current word and add the preceding word to its list
+                        }
+                    model[word].Add(words[j + 1].ToLower());
                     }
                 }
             }
+            trained = true;
         }   // end Train()
 
-        public String GenerateSentence()
+        public String GenerateSentence(int length = 20)
         {
-            List<String> sentence = new List<string>();
-            while (true)
+            if (!trained)
             {
+                throw new Exception("The model has not been trained yet.");
+            }
+            List<String> sentence = new List<string>();
+            while (sentence.Count != length)
+            {
+                List<String> foundWords = new List<String>();
                 if (sentence.Count == 0) // no words used yet
                 {
-                    sentence.Add(model["START"][random.Next(model["START"].Count)]); // choose any random word from list of start words
-                }
-                else if (IsEndWord(sentence[sentence.Count-1]))  // last word, stop generating text
-                {
-                    break;
+                    foundWords = model["START"];
                 }
                 else
                 {
                     try
                     {
-                        String lastWord = sentence[sentence.Count - 1];
-                        sentence.Add(model[lastWord][random.Next(model[lastWord].Count)]);
+                        foundWords = model[sentence[sentence.Count - 1]];  // related words to the last word in constructed sentence
                     }
-                    catch (KeyNotFoundException)
+                    catch (KeyNotFoundException)  // No key found, choose another word
                     {
-                        continue;
+                        List<string> keyList = new List<string>(model.Keys);
+                        string randomKey = "";  // new random word to be used
+                        do
+                        {
+                            randomKey = keyList[random.Next(keyList.Count)];
+                        } while ((randomKey == "START") || (randomKey == "END")); // Keep looping for a word that isn't start or end
+                        foundWords = model[randomKey];
                     }
                 }
+                sentence.Add(foundWords[random.Next(foundWords.Count)]); // choose a random word from the list associated with the current word
             }
             return String.Join(" ", sentence);
         }   // end GenerateSentence()
@@ -95,6 +111,13 @@ namespace Markov_Chain_Sentence_Generator
             }
             return false;
         }   // end IsEndWord()
+
+        private String CleanText(String text)
+        {
+            String cleaned = text.Replace("...", "");
+            cleaned = cleaned.Replace("\n", "");
+            return cleaned;
+        }
 
     } // end Markov{}
 }
