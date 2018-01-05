@@ -17,13 +17,10 @@ using System.IO;
 
 namespace Markov_Chain_Sentence_Generator
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         Markov mk = null;
-        String text = null;
+        string text = null;
         List<int> number_of_words = new List<int>() {10, 20, 30, 40, 50};
 
         public MainWindow()
@@ -65,7 +62,7 @@ namespace Markov_Chain_Sentence_Generator
                 MessageBox.Show("There is no text available for training.");
                 return;
             }
-            mk = new Markov("Markov Model", text);
+            mk = new Markov(text);
             try
             {
                 mk.Train();
@@ -77,7 +74,7 @@ namespace Markov_Chain_Sentence_Generator
                 MessageBox.Show(ex.Message);
                 trainingStatus_label.Content = "Not Trained";
             }
-        }
+        }   // end TrainModel()
 
         private void GenerateText(object sender, RoutedEventArgs e)
         {
@@ -87,19 +84,19 @@ namespace Markov_Chain_Sentence_Generator
                 MessageBox.Show("You must first select a text file and click train before generating text.");
                 return;
             }
-            if ((String)trainingStatus_label.Content != "Trained")
+            if ((string)trainingStatus_label.Content != "Trained")
             {
                 MessageBox.Show("There was a problem during loading and training the model. Please try again.");
                 return;
             }
             try
             {
-                generatedText_textBlock.Text = mk.GenerateSentence(length:(int)numberWords_comboBox.SelectedValue);
+                generatedText_textBlock.Text = mk.GenerateText(length: (int)numberWords_comboBox.SelectedValue);
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Problem with generating text. Error: " + ex.Message);
             }
-        }
-    }
+        }   // end GenerateText()
+    }   // END MainWindow{}
 }

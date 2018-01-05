@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Markov_Chain_Sentence_Generator"
         mc:Ignorable="d"
         Title="Markov Sentence Generator" Height="450" Width="600" WindowStartupLocation="CenterScreen">
-    <Grid Height="Auto" Width="Auto">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>

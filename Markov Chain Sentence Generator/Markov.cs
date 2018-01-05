@@ -1,123 +1,90 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Markov_Chain_Sentence_Generator
 {
-    public class Markov
+    class Markov
     {
-        public String ModelName;
-        private String text;
-        private Dictionary<String, List<String>> model;
+        private string text;  // full text read in from file
+        private Dictionary<string, Trigram> model;  // {"Hello my": {prefix=["Hello", "my], suffix=List()},...}
         private bool trained;
 
         static Random random = new Random();
 
-
-        public Markov(String name, String text)
+        public Markov(string text)
         {
-            this.ModelName = name;
             this.text = text;
-            model = new Dictionary<string, List<string>>();
-            model["START"] = new List<string>();
-            model["END"] = new List<string>();
+            model = new Dictionary<string, Trigram>();
             this.trained = false;
         }
 
         public void Train()
         {
-            trained = false;
+            this.trained = false;
             text = CleanText(text);
-            String[] sentences = text.Split('.');
-            if (sentences.Length < 2)
+            string[] sentences = text.Split('.');
+            if (sentences.Length < 2)   // too few fullstops
             {
                 throw new FormatException("The text provided has no periods('.'). Please use a text with sentences seperated with periods.");
             }
-            for(int i=0; i!=sentences.Length; i++)
+            for (int i = 0; i != sentences.Length; i++)
             {
-                String[] words = sentences[i].Split(' ');
-                if (words.Length < 1) { break; } // no words in sentence don't use
-                for(int j=0; j!=words.Length; j++)
+                string[] words = sentences[i].Split(' ');
+                if (words.Length < 3) { break; } // not enough words in sentence, skip sentence
+                for (int j = 0; j != words.Length - 2; j++)
                 {
-                    String word = words[j].ToLower();
-                    if (String.IsNullOrWhiteSpace(word))
+                    string index = words[j] + words[j + 1]; // bi-gram prefix to 1 word suffix
+                    if (!model.ContainsKey(index))
                     {
-                        continue;
+                        model[index] = new Trigram(words[j], words[j+1]);  // create entry for current word and add the preceding word to its list
                     }
-                    if (j == words.Length - 1)  // last word, goes to end
-                    {
-                        model["END"].Add(word);
-                    }
-                    else   // end words cannot be saved as indexes for lookup in the model, only start and middle words
-                    {  
-                        if (j == 0)  // first word, add to start
-                        {
-                            model["START"].Add(word);
-                        }
-                        if (!model.ContainsKey(word))
-                        {
-                            model[word] = new List<string>();  // create entry for current word and add the preceding word to its list
-                        }
-                    model[word].Add(words[j + 1].ToLower());
-                    }
+                    model[index].Add(words[j + 2]);  // e.g. k:v -> "Hello my": {prefix=["Hello", "my], suffix=List()}
                 }
             }
             trained = true;
         }   // end Train()
 
-        public String GenerateSentence(int length = 20)
+        public string GenerateText(int length = 20)
         {
             if (!trained)
             {
                 throw new Exception("The model has not been trained yet.");
             }
-            List<String> sentence = new List<string>();
-            while (sentence.Count != length)
+            List<string> keyList = new List<string>(model.Keys);  // list of all keys in model [["Hello my"], ["my name"], ["name is"]...]
+            List<string> sentence = new List<string>();  // words used in generated sentence, to be returned
+            string[] index = model[keyList[random.Next(keyList.Count)]].prefixWords; // get array of words used in the current index
+            sentence.Add(index[0]);  // Must ensure the sentence starts with 2 words before the rest of the text commences
+            sentence.Add(index[1]);
+            for (int i = 1; i != length; i++)
             {
-                List<String> foundWords = new List<String>();
-                if (sentence.Count == 0) // no words used yet
-                {
-                    foundWords = model["START"];
+                index[0] = sentence[i - 1];  // get previous 2 words in an array to find the next word
+                index[1] = sentence[i];
+                try
+                {  
+                    List<string> suffixes = model[index[0] + index[1]].suffixes;
+                    string choice = suffixes[random.Next(suffixes.Count)];
+                    sentence.Add(choice);   // get a random suffix using the index (i.e. last 2 words)
                 }
-                else
+                catch (KeyNotFoundException)    // If no prefix pair found select a whole new pair
                 {
-                    try
-                    {
-                        foundWords = model[sentence[sentence.Count - 1]];  // related words to the last word in constructed sentence
-                    }
-                    catch (KeyNotFoundException)  // No key found, choose another word
-                    {
-                        List<string> keyList = new List<string>(model.Keys);
-                        string randomKey = "";  // new random word to be used
-                        do
-                        {
-                            randomKey = keyList[random.Next(keyList.Count)];
-                        } while ((randomKey == "START") || (randomKey == "END")); // Keep looping for a word that isn't start or end
-                        foundWords = model[randomKey];
-                    }
+                    index = model[keyList[random.Next(keyList.Count)]].prefixWords;
+                    sentence.Add(index[0]); 
+                    sentence.Add(index[1]);
                 }
-                sentence.Add(foundWords[random.Next(foundWords.Count)]); // choose a random word from the list associated with the current word
             }
-            return String.Join(" ", sentence);
-        }   // end GenerateSentence()
+            return string.Join(" ", sentence);
+        }   // GenerateText()
 
-        private bool IsEndWord(String word)
-        {
-            foreach(String w in model["END"])
-            {
-                if (w == word) { return true; }  // match found
-            }
-            return false;
-        }   // end IsEndWord()
-
-        private String CleanText(String text)
-        {
-            String cleaned = text.Replace("...", "");
+        private string CleanText(string text)
+        {   // Remove/replace unwanted characters from the full text
+            string cleaned = text.Replace("...", "");
             cleaned = cleaned.Replace("\n", "");
             return cleaned;
-        }
+        }   // end CleanText()
 
-    } // end Markov{}
+    }   // END Markov{}
 }
