@@ -1,6 +1,6 @@
 # Markov Text Generator
 
-<img src="Resources/markov-example.png" alt="harry potter 4 text generated"/>
+<img src="Resources/markov-example.png" alt="markov example diagram"/>
 
 Quickly generate text based on a sample of text provided. The produced text will make no logical sense except
 for a few occasions. This type of text generation is based of a Markov model/process whereby the program 
@@ -11,7 +11,7 @@ e.g. "Hello my name is." -> {["Hello", "my"] : "name", ["my", "name"]: "is"...}.
 
 The image below shows text produced after genearting a model on the 4th Harry Potter book.
 
-<img src="Resources/markov3.png" alt="harry potter 4 text generated"/>
+<img src="Resources/markov3.PNG" alt="harry potter 4 text generated"/>
 
 ## How to Use
 
@@ -25,11 +25,11 @@ This text file must have .txt file extension. Please ensure that the text uses f
 
 Once you have selected the text file, you simply have to click the 'Train' button and you will be notified once the the model has been generated.
 
-<img src="Resources/markov2.png" alt="markov training success"/>
+<img src="Resources/markov2.PNG" alt="markov training success"/>
 
 Finally, select the number of words you want generated and click the 'Generate Text' button to get some computer generated sentences.
 
-<img src="Resources/markov1.png" alt="sample generated text"/>
+<img src="Resources/markov1.PNG" alt="sample generated text"/>
 
 ## Algorithm
 
